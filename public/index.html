@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>চিঠি</title>
+<meta name="description" content="Write an email as a চিঠি: a page from a ruled letter notebook. Design the paper, copy the letter, and paste it into any email. Nothing you write is uploaded.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Atma:wght@400;600&family=Kalam:wght@400;700&family=Tiro+Bangla:ital@0;1&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- app:start -->
+<div class="app" id="app">
+  <header class="bar">
+    <div class="brand">
+      <h1 class="mark"><span lang="bn">চিঠি</span><span class="mark-latin" id="mark-latin" data-t="markLatin"></span></h1>
+      <p class="tagline" data-t="tagline"></p>
+    </div>
+    <div class="seg" id="langs" role="group" data-aria="language"></div>
+  </header>
+
+  <div class="tabs" role="tablist" data-aria="panels">
+    <button class="tab" id="tab-write" type="button" role="tab" aria-selected="true" aria-controls="panel-write" data-t="tabWrite"></button>
+    <button class="tab" id="tab-design" type="button" role="tab" aria-selected="false" aria-controls="panel-write" data-t="tabDesign"></button>
+    <button class="tab" id="tab-letter" type="button" role="tab" aria-selected="false" aria-controls="panel-letter" data-t="tabLetter"></button>
+  </div>
+
+  <main class="work" data-tab="write">
+    <section class="pane" id="panel-write" data-aria="padLabel">
+      <div class="pane-head">
+        <div class="seg" role="group" data-aria="modeLabel">
+          <button class="seg-btn" type="button" data-mode="write" aria-pressed="true" data-t="modeWrite"></button>
+          <button class="seg-btn" type="button" data-mode="design" aria-pressed="false" data-t="modeDesign"></button>
+        </div>
+      </div>
+      <div class="view view-write">
+      <div class="rail" role="toolbar" data-aria="formatLabel">
+        <div class="group">
+          <button class="tool" type="button" id="tool-undo" data-tip="undo"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4L3 8l4 4"/><path d="M3 8h8.5a4.5 4.5 0 0 1 0 9H8"/></svg></button>
+          <button class="tool" type="button" id="tool-redo" data-tip="redo"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 4l4 4-4 4"/><path d="M17 8H8.5a4.5 4.5 0 0 0 0 9H12"/></svg></button>
+        </div>
+        <div class="group">
+          <button class="tool" type="button" data-inline="bold" aria-pressed="false" data-tip="bold" data-key="B"><span class="glyph glyph-b" data-glyph="b"></span></button>
+          <button class="tool" type="button" data-inline="italic" aria-pressed="false" data-tip="italic" data-key="I"><span class="glyph glyph-i" data-glyph="i"></span></button>
+          <button class="tool" type="button" data-inline="underline" aria-pressed="false" data-tip="underline" data-key="U"><span class="glyph glyph-u" data-glyph="u"></span></button>
+          <button class="tool" type="button" data-inline="strike" aria-pressed="false" data-tip="strike"><span class="glyph glyph-s" data-glyph="s"></span></button>
+          <button class="tool" type="button" data-inline="background" aria-pressed="false" data-tip="highlight"><span class="glyph glyph-hl" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-inline="color" aria-pressed="false" data-tip="red"><span class="glyph glyph-red" data-glyph="a"></span></button>
+        </div>
+        <div class="group">
+          <button class="tool" type="button" data-block="header" data-value="1" aria-pressed="false" data-tip="h1"><span class="glyph glyph-h1" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-block="header" data-value="2" aria-pressed="false" data-tip="h2"><span class="glyph glyph-h2" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-block="blockquote" data-value="true" aria-pressed="false" data-tip="quote"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 12.5V10a4.5 4.5 0 0 1 4-4.5M4 12.5h3.5V9.5H4M11.5 12.5V10a4.5 4.5 0 0 1 4-4.5M11.5 12.5H15V9.5h-3.5"/></svg></button>
+        </div>
+        <div class="group">
+          <button class="tool" type="button" data-block="list" data-value="bullet" aria-pressed="false" data-tip="bullets"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="3.5" cy="5" r="1"/><circle cx="3.5" cy="10" r="1"/><circle cx="3.5" cy="15" r="1"/><path d="M8 5h9M8 10h9M8 15h9"/></svg></button>
+          <button class="tool" type="button" data-block="list" data-value="ordered" aria-pressed="false" data-tip="numbers"><span class="glyph" data-glyph="ol"></span></button>
+        </div>
+        <div class="group">
+          <button class="tool" type="button" data-block="align" data-value="" aria-pressed="false" data-tip="left"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h9M3 15h12"/></svg></button>
+          <button class="tool" type="button" data-block="align" data-value="center" aria-pressed="false" data-tip="center"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M5.5 10h9M4 15h12"/></svg></button>
+          <button class="tool" type="button" data-block="align" data-value="right" aria-pressed="false" data-tip="right"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M8 10h9M5 15h12"/></svg></button>
+        </div>
+      </div>
+
+      <div class="rail" role="toolbar" data-aria="insertLabel">
+        <span class="rail-label" data-t="insert"></span>
+        <div class="group">
+          <button class="tool tool-text" type="button" id="tool-date" data-t="date" data-title="dateTip"></button>
+          <button class="tool tool-text" type="button" id="tool-greeting" data-t="greeting" data-title="greetingTip"></button>
+          <button class="tool tool-text" type="button" id="tool-signoff" data-t="signoff" data-title="signoffTip"></button>
+          <button class="tool tool-text" type="button" id="tool-ps" data-t="ps" data-title="psTip"></button>
+          <button class="tool tool-text" type="button" id="tool-rule" data-t="divider"></button>
+          <button class="tool tool-text" type="button" id="tool-page" data-t="pageBreak" data-title="pageBreakTip"></button>
+        </div>
+        <div class="group">
+          <button class="tool tool-text" type="button" id="tool-photo"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="4" width="15" height="12" rx="1"/><circle cx="7" cy="8.5" r="1.4"/><path d="M3 14.5l4.5-4 3 2.5 2.5-2 4 3.5"/></svg><span data-t="photo"></span></button>
+          <button class="tool tool-text" type="button" id="tool-link" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 11.5a3 3 0 0 0 4.2 0l3-3a3 3 0 0 0-4.2-4.2l-1 1M11.5 8.5a3 3 0 0 0-4.2 0l-3 3a3 3 0 0 0 4.2 4.2l1-1"/></svg><span data-t="link"></span></button>
+        </div>
+      </div>
+
+      <div class="strip" id="starter-strip" hidden>
+        <span data-t="replaceAsk"></span>
+        <button class="btn" id="starter-yes" type="button" data-t="replaceYes"></button>
+        <button class="btn btn-plain" id="starter-no" type="button" data-t="replaceNo"></button>
+      </div>
+
+      <div class="strip" id="link-strip" hidden>
+        <label class="rail-label" for="link-url" data-t="linkLabel"></label>
+        <input class="field" id="link-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://">
+        <button class="btn" id="link-save" type="button" data-t="linkSave"></button>
+        <button class="btn btn-plain" id="link-remove" type="button" data-t="linkRemove"></button>
+        <button class="btn btn-plain" id="link-cancel" type="button" data-t="cancel"></button>
+      </div>
+
+      <div class="strip" id="photo-strip" hidden>
+        <span class="rail-label" data-t="photoSize"></span>
+        <button class="btn" type="button" data-photo-size="50%" aria-pressed="false" data-t="small"></button>
+        <button class="btn" type="button" data-photo-size="75%" aria-pressed="false" data-t="medium"></button>
+        <button class="btn" type="button" data-photo-size="100%" aria-pressed="false" data-t="large"></button>
+        <button class="btn btn-plain" id="photo-remove" type="button" data-t="photoRemove"></button>
+      </div>
+
+      <div class="editor" id="editor"></div>
+      <input id="photo-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
+
+      <div class="status">
+        <div class="status-facts">
+          <span id="word-count"></span>
+          <span id="sample-note" data-t="sampleNote"></span>
+        </div>
+        <div class="status-actions">
+        <select class="select" id="starter" data-aria="starter"></select>
+        <span id="fresh">
+          <button class="btn btn-plain" id="fresh-ask" type="button" data-t="fresh"></button>
+          <span id="fresh-confirm" hidden><span data-t="freshAsk"></span>
+            <button class="btn" id="fresh-yes" type="button" data-t="freshYes"></button>
+            <button class="btn btn-plain" id="fresh-no" type="button" data-t="freshNo"></button>
+          </span>
+        </span>
+        </div>
+      </div>
+      </div>
+      <div class="view view-design">
+        <div class="design" id="design"></div>
+      </div>
+    </section>
+
+    <section class="pane" id="panel-letter" data-aria="letterLabel">
+      <div class="rail">
+        <div class="option"><span class="option-name" id="paper-label" data-t="paper"></span>
+          <div class="chips" role="group" aria-labelledby="paper-label" id="papers"></div>
+        </div>
+        <button class="btn" id="customize" type="button" aria-pressed="false" data-t="customize"></button>
+        <span class="spring"></span>
+        <div class="option option-view"><span class="option-name" id="view-label" data-t="view"></span>
+          <div class="seg" role="group" aria-labelledby="view-label">
+            <button class="seg-btn" type="button" data-view="wide" aria-pressed="true" data-t="wide"></button>
+            <button class="seg-btn" type="button" data-view="phone" aria-pressed="false" data-t="phone"></button>
+          </div>
+        </div>
+      </div>
+      <p class="hint" id="design-hint" hidden></p>
+
+      <div class="stage" id="stage">
+        <div class="frame" id="frame"><div class="letter" id="letter"></div></div>
+      </div>
+
+      <div class="send">
+        <button class="pick" id="copy" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M13 7V4.5A1.5 1.5 0 0 0 11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13H7"/></svg><span id="copy-label" data-t="copy"></span></button>
+        <button class="btn" id="as-image" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="4" width="15" height="12" rx="1"/><circle cx="7" cy="8.5" r="1.4"/><path d="M3 14.5l4.5-4 3 2.5 2.5-2 4 3.5"/></svg><span data-t="asImage"></span></button>
+        <button class="btn" id="as-code" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4M11.2 4.5l-2.4 11"/></svg><span data-t="asCode"></span></button>
+        <p class="said is-idle" id="said" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="veil" id="image-veil" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="image-title">
+    <h2 class="sheet-title" id="image-title" data-t="imageTitle"></h2>
+    <p class="sheet-note" data-t="imageNote"></p>
+    <img class="shot" id="shot" alt="" data-alt="imageAlt">
+    <div class="sheet-row">
+      <button class="btn" id="image-copy" type="button" data-t="imageCopy"></button>
+      <button class="btn" id="image-save" type="button" data-t="imageSave" hidden></button>
+      <button class="btn btn-plain" id="image-close" type="button" data-t="close"></button>
+    </div>
+    <p class="sheet-note" id="image-said" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<div class="veil" id="code-veil" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="code-title">
+    <h2 class="sheet-title" id="code-title" data-t="codeTitle"></h2>
+    <p class="sheet-note" data-t="codeNote"></p>
+    <textarea class="code" id="code" readonly spellcheck="false" data-aria="codeTitle"></textarea>
+    <div class="sheet-row">
+      <button class="btn" id="code-copy" type="button" data-t="codeCopy"></button>
+      <button class="btn btn-plain" id="code-close" type="button" data-t="close"></button>
+    </div>
+    <p class="sheet-note" id="code-said" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<div class="offstage" id="offstage" aria-hidden="true"></div>
+<div id="measure" aria-hidden="true"></div>
+<!-- app:end -->
+<script src="vendor/quill.js"></script>
+<script src="vendor/html2canvas.min.js"></script>
+<script src="builder.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
