@@ -46,7 +46,7 @@
     en: {
       markLatin: 'Chithi',
       tagline: 'Write a letter, copy it, and paste it into any email. Nothing you write is uploaded.',
-      language: 'Language', panels: 'Panels', tabWrite: 'Write', tabLetter: 'Letter',
+      language: 'Language', source: 'Source code on GitHub', panels: 'Panels', tabWrite: 'Write', tabLetter: 'Letter',
       padLabel: 'Writing pad', letterLabel: 'Finished letter', formatLabel: 'Formatting', insertLabel: 'Add to the letter',
       undo: 'Undo', redo: 'Redo', bold: 'Bold', italic: 'Italic', underline: 'Underline', strike: 'Strikethrough',
       highlight: 'Highlighter', red: 'Red pen', h1: 'Heading', h2: 'Subheading', quote: 'Quote',
@@ -74,6 +74,7 @@
       badLink: 'That address is not valid. Enter one that starts with https://',
       notImage: 'That file is not a picture. Choose a PNG, JPG, GIF or WebP.',
       tooMany: 'A letter can hold up to {n} photos.',
+      photosNotKept: 'The photos are too big to keep in this browser. Your words are kept, but the photos will be gone if you reload.',
       tooLarge: 'That photo is over 25 MB. Choose a smaller one.',
       unreadable: 'That photo could not be read. Try another one.',
       placeholder: 'Dear …,\nStart writing here.', editorLabel: 'Write your letter',
@@ -110,7 +111,7 @@
     bn: {
       markLatin: '',
       tagline: 'চিঠি লিখুন, কপি করুন, তারপর যেকোনো ইমেইলে পেস্ট করুন। আপনার লেখা কোথাও আপলোড হয় না।',
-      language: 'ভাষা', panels: 'প্যানেল', tabWrite: 'লিখুন', tabLetter: 'চিঠি',
+      language: 'ভাষা', source: 'GitHub-এ সোর্স কোড', panels: 'প্যানেল', tabWrite: 'লিখুন', tabLetter: 'চিঠি',
       padLabel: 'লেখার প্যাড', letterLabel: 'তৈরি চিঠি', formatLabel: 'লেখা সাজানো', insertLabel: 'চিঠিতে বসান',
       undo: 'আগের অবস্থায় ফিরুন', redo: 'আবার করুন', bold: 'মোটা', italic: 'বাঁকা', underline: 'নিচে দাগ', strike: 'কেটে দেওয়া',
       highlight: 'হাইলাইটার', red: 'লাল কালি', h1: 'শিরোনাম', h2: 'উপশিরোনাম', quote: 'উদ্ধৃতি',
@@ -138,6 +139,7 @@
       badLink: 'ঠিকানাটি সঠিক নয়। https:// দিয়ে শুরু হওয়া একটি ঠিকানা দিন।',
       notImage: 'এই ফাইলটি ছবি নয়। PNG, JPG, GIF বা WebP ছবি দিন।',
       tooMany: 'একটি চিঠিতে সর্বোচ্চ {n}টি ছবি দেওয়া যায়।',
+      photosNotKept: 'ছবিগুলো এই ব্রাউজারে রাখার জন্য অনেক বড়। লেখা রাখা আছে, কিন্তু পেজ রিলোড করলে ছবিগুলো থাকবে না।',
       tooLarge: 'ছবিটি ২৫ এমবির বেশি। ছোট একটি ছবি দিন।',
       unreadable: 'ছবিটি পড়া যায়নি। অন্য একটি ছবি দিয়ে চেষ্টা করুন।',
       placeholder: 'প্রিয় …,\nএখানে লিখতে শুরু করুন।', editorLabel: 'চিঠি লিখুন',
@@ -465,10 +467,21 @@
   quill.root.setAttribute('spellcheck', 'false');
 
   // ---- Draft kept in this browser only
+  var photosDropped = false;
   function save() {
+    var draft = { ops: quill.getContents().ops, design: state.design, lang: state.lang, sample: state.sample };
     try {
-      localStorage.setItem(STORE, JSON.stringify({ ops: quill.getContents().ops, design: state.design, lang: state.lang, sample: state.sample }));
-    } catch (e) { /* storage full or unavailable: the draft just is not kept */ }
+      localStorage.setItem(STORE, JSON.stringify(draft));
+      photosDropped = false;
+    } catch (e) {
+      // Photos can outgrow the few MB a browser keeps; keep the words rather than an older draft.
+      draft.ops = draft.ops.filter(function (op) { return !(op.insert && typeof op.insert === 'object' && op.insert.image); });
+      try {
+        localStorage.setItem(STORE, JSON.stringify(draft));
+        if (!photosDropped) say('photosNotKept');
+        photosDropped = true;
+      } catch (e2) { /* storage unavailable: the draft just is not kept */ }
+    }
   }
 
   function load() {
@@ -1339,6 +1352,10 @@
   render();
   // Page breaks depend on how wide the letters are, so lay the letter out again once the fonts are in.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { render(); });
+
+  // A reload or closed tab within the save delay would lose the last few keystrokes.
+  window.addEventListener('pagehide', save);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') save(); });
 
   quill.on('text-change', function (delta, old, source) {
     if (source === 'user' && state.sample) setSample(false);

@@ -98,7 +98,7 @@ test('copy puts the letter on the clipboard, and it survives a paste', async ({ 
   await other.route('**/paste-box', (route) => route.fulfill({ contentType: 'text/html; charset=utf-8', body: PASTE_BOX }));
   await other.goto('/paste-box');
   await other.click('#box');
-  await other.keyboard.press('Control+V');
+  await other.keyboard.press('ControlOrMeta+V');
   await expect(other.locator('#box table').first()).toBeVisible();
   const pasted = await other.locator('#box').evaluate((box) => ({
     images: box.querySelectorAll('img').length,

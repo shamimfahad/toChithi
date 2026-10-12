@@ -58,6 +58,10 @@ body { background: var(--desk); color: var(--ink); font-family: var(--ui); font-
 .mark { margin: 0; display: flex; align-items: baseline; gap: 10px; font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1.15; }
 .mark-latin { font-size: 19px; font-style: italic; color: var(--ink-soft); }
 .tagline { margin: 0; color: var(--ink-soft); text-wrap: balance; }
+.bar-end { display: flex; align-items: center; gap: 10px; }
+.repo { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; color: var(--ink); border: 1px solid var(--ink); border-radius: 2px; }
+.repo:hover { background: var(--ink); color: var(--panel); }
+.repo svg { width: 18px; height: 18px; fill: currentColor; }
 
 .seg { display: inline-flex; border: 1px solid var(--ink); border-radius: 2px; overflow: hidden; }
 .seg-btn { height: 32px; padding: 0 12px; font: inherit; font-size: 14px; color: var(--ink); background: transparent; border: 0; cursor: pointer; white-space: nowrap; }
