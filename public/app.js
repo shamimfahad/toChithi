@@ -28,6 +28,8 @@
   var mix = C.mix;
   var contrast = C.contrast;
   var isDark = C.isDark;
+  var makeDraft = C.makeDraft;
+  var readDraft = C.readDraft;
   var autoRule = C.autoRule;
   var normDesign = C.normDesign;
   var safeLink = C.safeLink;
@@ -62,6 +64,15 @@
       sampleNote: 'This is a sample letter. Type over it.',
       words: '{n} words', words_one: '{n} word',
       fresh: 'New letter', freshAsk: 'This clears everything you have written.', freshYes: 'Clear the letter', freshNo: 'Keep it',
+      save: 'Save', open: 'Open draft', saveTitle: 'Save your letter',
+      saveDraft: 'Save draft (.chithi.json)',
+      saveDraftNote: 'To keep writing later. Everything is kept: the words, photos, paper and language. Open it with “Open draft”, on this device or any other.',
+      saveLetter: 'Save letter (.html)',
+      saveLetterNote: 'The finished letter as a web page, to open in a browser or keep. It cannot be opened again for editing.',
+      saved: 'Saved.', saveFail: 'The file could not be saved.',
+      openAsk: 'Opening the draft replaces what you have written.', openYes: 'Open the draft', opened: 'Draft opened.',
+      openBad: 'That file is not a toChithi draft. Choose a file made with “Save draft”.',
+      openBig: 'That file is too large to be a draft.',
       paper: 'Paper', ink: 'Ink', lettering: 'Lettering', l_book: 'Book', l_type: 'Typewriter', l_hand: 'Handwritten',
       paper_khata: 'Notebook', paper_holud: 'Yellow pad', paper_neel: 'Blue paper', paper_airmail: 'Airmail', paper_plain: 'Plain',
       ink_neel: 'Blue ink', ink_kalo: 'Black ink', ink_sobuj: 'Green ink', ink_beguni: 'Violet ink',
@@ -74,7 +85,7 @@
       badLink: 'That address is not valid. Enter one that starts with https://',
       notImage: 'That file is not a picture. Choose a PNG, JPG, GIF or WebP.',
       tooMany: 'A letter can hold up to {n} photos.',
-      photosNotKept: 'The photos are too big to keep in this browser. Your words are kept, but the photos will be gone if you reload.',
+      photosNotKept: 'The photos are too big to keep in this browser. Your words are kept, but the photos will be gone if you reload. Use Save, then “Save draft”, to keep them.',
       tooLarge: 'That photo is over 25 MB. Choose a smaller one.',
       unreadable: 'That photo could not be read. Try another one.',
       placeholder: 'Dear …,\nStart writing here.', editorLabel: 'Write your letter',
@@ -127,6 +138,15 @@
       sampleNote: 'এটি একটি নমুনা চিঠি। মুছে নিজের কথা লিখুন।',
       words: '{n}টি শব্দ', words_one: '{n}টি শব্দ',
       fresh: 'নতুন চিঠি', freshAsk: 'সব লেখা মুছে যাবে।', freshYes: 'মুছে ফেলুন', freshNo: 'থাক',
+      save: 'সেভ', open: 'খসড়া খুলুন', saveTitle: 'চিঠি সেভ করুন',
+      saveDraft: 'খসড়া সেভ করুন (.chithi.json)',
+      saveDraftNote: 'পরে আবার লেখার জন্য। লেখা, ছবি, কাগজ আর ভাষা, সবই থাকবে। এই বা অন্য যেকোনো ডিভাইসে “খসড়া খুলুন” দিয়ে খুলুন।',
+      saveLetter: 'চিঠি সেভ করুন (.html)',
+      saveLetterNote: 'তৈরি চিঠিটি একটি ওয়েব পেজ হিসেবে, ব্রাউজারে খোলা বা রেখে দেওয়ার জন্য। এটি আবার খুলে সম্পাদনা করা যাবে না।',
+      saved: 'সেভ হয়েছে।', saveFail: 'ফাইলটি সেভ করা যায়নি।',
+      openAsk: 'খসড়া খুললে আপনার এখনকার লেখা মুছে যাবে।', openYes: 'খসড়া খুলুন', opened: 'খসড়া খোলা হয়েছে।',
+      openBad: 'এটি toChithi-র খসড়া ফাইল নয়। “খসড়া সেভ করুন” দিয়ে রাখা ফাইলটি বেছে নিন।',
+      openBig: 'ফাইলটি খসড়া হওয়ার জন্য অনেক বড়।',
       paper: 'কাগজ', ink: 'কালি', lettering: 'হরফ', l_book: 'ছাপা', l_type: 'টাইপরাইটার', l_hand: 'হাতের লেখা',
       paper_khata: 'খাতার পাতা', paper_holud: 'হলুদ প্যাড', paper_neel: 'নীল কাগজ', paper_airmail: 'এয়ারমেইল', paper_plain: 'সাদা কাগজ',
       ink_neel: 'নীল কালি', ink_kalo: 'কালো কালি', ink_sobuj: 'সবুজ কালি', ink_beguni: 'বেগুনি কালি',
@@ -139,7 +159,7 @@
       badLink: 'ঠিকানাটি সঠিক নয়। https:// দিয়ে শুরু হওয়া একটি ঠিকানা দিন।',
       notImage: 'এই ফাইলটি ছবি নয়। PNG, JPG, GIF বা WebP ছবি দিন।',
       tooMany: 'একটি চিঠিতে সর্বোচ্চ {n}টি ছবি দেওয়া যায়।',
-      photosNotKept: 'ছবিগুলো এই ব্রাউজারে রাখার জন্য অনেক বড়। লেখা রাখা আছে, কিন্তু পেজ রিলোড করলে ছবিগুলো থাকবে না।',
+      photosNotKept: 'ছবিগুলো এই ব্রাউজারে রাখার জন্য অনেক বড়। লেখা রাখা আছে, কিন্তু পেজ রিলোড করলে ছবিগুলো থাকবে না। ছবিসহ রাখতে “সেভ” থেকে “খসড়া সেভ করুন” বেছে নিন।',
       tooLarge: 'ছবিটি ২৫ এমবির বেশি। ছোট একটি ছবি দিন।',
       unreadable: 'ছবিটি পড়া যায়নি। অন্য একটি ছবি দিয়ে চেষ্টা করুন।',
       placeholder: 'প্রিয় …,\nএখানে লিখতে শুরু করুন।', editorLabel: 'চিঠি লিখুন',
@@ -434,6 +454,7 @@
 
   var built = { html: '', text: '', pages: 1 };
   var MAX_PHOTOS = 12;
+  var MAX_DRAFT = 40 * 1024 * 1024; // twelve photos at the size they are kept come to a few MB
 
   // A page break is a line of its own in the editor.
   var BlockEmbed = window.Quill.import('blots/block/embed');
@@ -646,6 +667,7 @@
     if (STARTERS.indexOf(kind) < 0) return;
     if (state.sample || isBlank()) { useStarter(kind); return; }
     pendingStarter = kind;
+    $('open-strip').hidden = true;
     $('link-strip').hidden = true;
     $('photo-strip').hidden = true;
     $('starter-strip').hidden = false;
@@ -668,6 +690,7 @@
     $('link-remove').hidden = !current;
     $('photo-strip').hidden = true;
     $('starter-strip').hidden = true;
+    $('open-strip').hidden = true;
     $('link-strip').hidden = false;
     $('link-url').focus();
   });
@@ -777,6 +800,7 @@
     document.querySelectorAll('[data-photo-size]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.photoSize === width ? 'true' : 'false'); });
     $('link-strip').hidden = true;
     $('starter-strip').hidden = true;
+    $('open-strip').hidden = true;
     $('photo-strip').hidden = false;
   }
   quill.root.addEventListener('click', function (e) {
@@ -1249,10 +1273,24 @@
   var saver = null; // set when the host page lets us hand over a file
   if (window.claude && typeof window.claude.use === 'function') {
     window.claude.use('downloads').then(function (ns) {
-      if (ns) { saver = ns; $('image-save').hidden = false; }
+      if (ns) { saver = ns; $('image-save').hidden = false; $('save-ask').hidden = false; }
     }, function () { /* saving is not offered here */ });
   } else {
-    $('image-save').hidden = false; // opened as an ordinary web page
+    // opened as an ordinary web page
+    $('image-save').hidden = false;
+    $('save-ask').hidden = false;
+  }
+  function saveFile(name, blob) {
+    if (saver) return saver.save({ filename: name, data: blob });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+    return Promise.resolve();
   }
 
   $('as-image').addEventListener('click', function () {
@@ -1299,29 +1337,106 @@
   $('image-save').addEventListener('click', function () {
     var note = $('image-said');
     if (!shotBlob) return;
-    if (saver) {
-      saver.save({ filename: 'chithi.png', data: shotBlob }).then(function () {
-        note.textContent = t('imageSaved');
-      }, function (err) {
-        note.textContent = err && err.code === 'declined' ? '' : t('imageSaveFail');
-      });
-    } else {
-      var a = document.createElement('a');
-      a.href = shotUrl;
-      a.download = 'chithi.png';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
+    saveFile('chithi.png', shotBlob).then(function () {
+      if (saver) note.textContent = t('imageSaved');
+    }, function (err) {
+      note.textContent = err && err.code === 'declined' ? '' : t('imageSaveFail');
+    });
   });
   $('image-close').addEventListener('click', function () { $('image-veil').hidden = true; $('as-image').focus(); });
+
+  // ---- Save: a draft to finish later, or the finished letter as a web page
+  function fileDate() {
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function saveAs(name, body, type) {
+    var note = $('save-said');
+    saveFile(name, new Blob([body], { type: type })).then(function () {
+      note.textContent = t('saved');
+    }, function (err) {
+      note.textContent = err && err.code === 'declined' ? '' : t('saveFail');
+    });
+  }
+  $('save-ask').addEventListener('click', function () {
+    $('save-said').textContent = '';
+    $('save-veil').hidden = false;
+    $('save-draft').focus();
+  });
+  $('save-draft').addEventListener('click', function () {
+    var draft = makeDraft(quill.getContents().ops, state.design, state.lang, state.sample);
+    saveAs('chithi-' + fileDate() + '.chithi.json', JSON.stringify(draft), 'application/json');
+  });
+  $('save-letter').addEventListener('click', function () {
+    clearTimeout(timer);
+    render();
+    saveAs('chithi-' + fileDate() + '.html', asDocument(built.html), 'text/html');
+  });
+  $('save-close').addEventListener('click', function () { $('save-veil').hidden = true; $('save-ask').focus(); });
+
+  // ---- Open a saved draft (confirmed in the page before it replaces a letter)
+  // Messages about opening are shown in the writing pane, which is the one in view on a phone.
+  function tellOpen(key) { $('open-said').textContent = key ? t(key) : ''; }
+  var pendingDraft = null;
+  // An opened draft is a fresh start, like a page load: there is nothing to undo back into.
+  function useDraft(draft) {
+    $('open-strip').hidden = true;
+    pendingDraft = null;
+    var lang = state.lang;
+    if (draft.lang) state.lang = draft.lang;
+    try {
+      quill.setContents(draft.sample ? letterFor('sample') : draft.ops, 'silent');
+    } catch (e) {
+      state.lang = lang;
+      tellOpen('openBad');
+      return;
+    }
+    quill.history.clear();
+    state.design = draft.design;
+    setSample(draft.sample);
+    applyLang();
+    refreshTools();
+    afterDesign();
+    tellOpen(photosDropped ? 'photosNotKept' : 'opened');
+  }
+  function readText(file) {
+    if (typeof file.text === 'function') return file.text();
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { resolve(String(r.result)); };
+      r.onerror = function () { reject(r.error); };
+      r.readAsText(file);
+    });
+  }
+  $('open-ask').addEventListener('click', function () { tellOpen(''); $('draft-input').click(); });
+  $('draft-input').addEventListener('change', function (e) {
+    var file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.size > MAX_DRAFT) { tellOpen('openBig'); return; }
+    Promise.resolve(file).then(readText).then(function (text) {
+      return readDraft(JSON.parse(text), { langs: Object.keys(LANGS), maxPhotos: MAX_PHOTOS });
+    }).catch(function () { return null; }).then(function (draft) {
+      if (!draft) { tellOpen('openBad'); return; }
+      if (state.sample || isBlank()) { useDraft(draft); return; }
+      pendingDraft = draft;
+      $('link-strip').hidden = true;
+      $('photo-strip').hidden = true;
+      $('starter-strip').hidden = true;
+      $('open-strip').hidden = false;
+      $('open-yes').focus();
+    });
+  });
+  $('open-yes').addEventListener('click', function () { if (pendingDraft) useDraft(pendingDraft); });
+  $('open-no').addEventListener('click', function () { pendingDraft = null; $('open-strip').hidden = true; quill.focus(); });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     if (!$('image-veil').hidden) $('image-close').click();
     if (!$('code-veil').hidden) $('code-close').click();
+    if (!$('save-veil').hidden) $('save-close').click();
   });
-  ['image-veil', 'code-veil'].forEach(function (id) {
+  ['image-veil', 'code-veil', 'save-veil'].forEach(function (id) {
     $(id).addEventListener('click', function (e) { if (e.target === $(id)) $(id).hidden = true; });
   });
 
@@ -1359,6 +1474,7 @@
 
   quill.on('text-change', function (delta, old, source) {
     if (source === 'user' && state.sample) setSample(false);
+    if (source === 'user') tellOpen('');
     renderSoon();
     refreshTools();
   });

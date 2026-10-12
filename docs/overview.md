@@ -25,8 +25,9 @@ A free, serverless tool. You write in a rich text editor, design the paper, see 
 - **Width:** full width by default (the letter fills the reader's screen); a 600px letter size and a 780px wide size are the alternatives.
 - **Pages:** a sheet is never shorter than one page; short letters are filled out with blank ruled lines. "New page" starts a sheet anywhere; "split into pages" does it automatically at a chosen page length, with optional page numbers. Sheets are stacked with a gap, since email has no real pages. A paragraph is never cut in two.
 - **Ways out:** copy as rich text (for Gmail, Outlook, Yahoo), make a PNG image, or copy the raw HTML for newsletter tools. One red copy button, two quiet buttons, and the next step shown beside them.
+- **Save and open:** "Save" offers a draft (`.chithi.json`: words, formats, photos, stationery and language, opened again with "Open draft" on any device) or the finished letter as an `.html` page. An opened draft is checked like anything typed: only text, photos carried inside the file, page breaks and plain format values come through (`readDraft` in `builder.js`).
 - **Built to survive pasting:** inline styles on plain tables, no media queries. Ruled lines and grids are gradients written as self-contained stripes; where an email editor drops them, the paper colour, margin line and layout remain. Airmail and plain paper use only colours and borders. Ruled lines are confirmed to survive a paste into Gmail's compose window.
-- **Privacy:** everything runs in the browser, nothing is uploaded; the draft autosaves locally.
+- **Privacy:** everything runs in the browser, nothing is uploaded; the draft autosaves locally, and can be saved to a file to keep photos too big for the browser's storage.
 - **Stack:** static files, no build step. Quill 2.0.2 (editor) and html2canvas 1.4.1 (image export), vendored. Fonts: Tiro Bangla and Anek Bangla, Kalam and Atma for handwriting.
 
 ## Code and deployment
@@ -34,7 +35,7 @@ The converter is now a small repository, `tochithi`, ready to push:
 
 - `public/` is the site: `index.html`, `styles.css`, `builder.js` (the only code that writes email markup, testable on its own), `app.js` (editor, stationery panel, preview, copy and export) and `vendor/`.
 - `netlify.toml` and `vercel.json` publish `public/` with no build step and set the security headers (Content-Security-Policy with `script-src 'self'`).
-- `npm test` runs 13 builder and config tests; `npm run test:browser` runs 8 Playwright tests against the site served with the production headers.
+- `npm test` runs 15 builder and config tests; `npm run test:browser` runs 10 Playwright tests against the site served with the production headers.
 - `npm run artifact` packs the site into one file for the চিঠি artifact, which is published from it.
 - **Status:** committed locally; not yet pushed or deployed. Pushing needs a GitHub repository; deploying needs the repository imported once in Netlify or Vercel.
 

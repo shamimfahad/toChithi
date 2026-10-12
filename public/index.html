@@ -92,6 +92,12 @@
         <button class="btn btn-plain" id="starter-no" type="button" data-t="replaceNo"></button>
       </div>
 
+      <div class="strip" id="open-strip" hidden>
+        <span data-t="openAsk"></span>
+        <button class="btn" id="open-yes" type="button" data-t="openYes"></button>
+        <button class="btn btn-plain" id="open-no" type="button" data-t="replaceNo"></button>
+      </div>
+
       <div class="strip" id="link-strip" hidden>
         <label class="rail-label" for="link-url" data-t="linkLabel"></label>
         <input class="field" id="link-url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://">
@@ -110,14 +116,18 @@
 
       <div class="editor" id="editor"></div>
       <input id="photo-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
+      <input id="draft-input" type="file" accept=".json,application/json" hidden>
 
       <div class="status">
         <div class="status-facts">
           <span id="word-count"></span>
           <span id="sample-note" data-t="sampleNote"></span>
+          <span id="open-said" role="status" aria-live="polite"></span>
         </div>
         <div class="status-actions">
         <select class="select" id="starter" data-aria="starter"></select>
+        <button class="btn btn-plain" id="save-ask" type="button" data-t="save" hidden></button>
+        <button class="btn btn-plain" id="open-ask" type="button" data-t="open"></button>
         <span id="fresh">
           <button class="btn btn-plain" id="fresh-ask" type="button" data-t="fresh"></button>
           <span id="fresh-confirm" hidden><span data-t="freshAsk"></span>
@@ -187,6 +197,24 @@
       <button class="btn btn-plain" id="code-close" type="button" data-t="close"></button>
     </div>
     <p class="sheet-note" id="code-said" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<div class="veil" id="save-veil" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="save-title">
+    <h2 class="sheet-title" id="save-title" data-t="saveTitle"></h2>
+    <div class="choice">
+      <button class="btn" id="save-draft" type="button" data-t="saveDraft"></button>
+      <p class="sheet-note" data-t="saveDraftNote"></p>
+    </div>
+    <div class="choice">
+      <button class="btn" id="save-letter" type="button" data-t="saveLetter"></button>
+      <p class="sheet-note" data-t="saveLetterNote"></p>
+    </div>
+    <div class="sheet-row">
+      <button class="btn btn-plain" id="save-close" type="button" data-t="close"></button>
+    </div>
+    <p class="sheet-note" id="save-said" role="status" aria-live="polite"></p>
   </div>
 </div>
 

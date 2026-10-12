@@ -132,3 +132,43 @@ test('numbered lists keep counting across a page break and use Bangla digits in 
   assert.match(text, /১\. এক\n২\. দুই\n\n৩\. তিন\nশেষ\n১\. আবার/);
   assert.ok(buildLetter(item('one'), {}).html.includes('>1.<'));
 });
+
+test('a saved draft opens back exactly as it was', () => {
+  const photo = 'data:image/png;base64,iVBORw0KGgo=';
+  const ops = [
+    { insert: 'প্রিয় মা,', attributes: { bold: true } }, { insert: '\n', attributes: { align: 'right' } },
+    { insert: { image: photo }, attributes: { width: '75%' } }, { insert: '\n' },
+    { insert: { pagebreak: true } }, { insert: 'ইতি\n' },
+  ];
+  const design = { ...DESIGN0, pattern: 'grid', ink: '#1D5B3F' };
+  const file = JSON.parse(JSON.stringify(Chithi.makeDraft(ops, design, 'bn', false)));
+  assert.equal(file.format, Chithi.DRAFT_FORMAT);
+  const back = Chithi.readDraft(file, { langs: ['en', 'bn'], maxPhotos: 12 });
+  assert.deepEqual(back, { ops, design: normDesign(design), lang: 'bn', sample: false });
+});
+
+test('an opened file lets in only text, carried photos, page breaks and plain values', () => {
+  const read = (d, opts) => Chithi.readDraft(d, { langs: ['en', 'bn'], maxPhotos: 2, ...opts });
+  const draft = (ops, extra) => ({ format: Chithi.DRAFT_FORMAT, version: 1, ops, ...extra });
+  for (const bad of [null, 'x', [], {}, { format: 'other', version: 1, ops: [] }, draft('x'), draft([]), { ...draft([{ insert: 'a\n' }]), version: 2 }, draft([{ insert: { video: 'x' } }, 7, null])]) {
+    assert.equal(read(bad), null, JSON.stringify(bad));
+  }
+  const photo = 'data:image/jpeg;base64,AAAA';
+  const got = read(draft([
+    { insert: 'hi', attributes: { bold: true, link: { href: 'x' }, color: ['red'], size: 3, bad: NaN } },
+    { insert: { image: 'https://evil.example/x.png' } },
+    { insert: { image: 'data:image/svg+xml;base64,PHN2Zz4=' } },
+    { insert: { image: 'javascript:alert(1)' } },
+    { insert: { image: photo } }, { insert: { image: photo } }, { insert: { image: photo } },
+    { insert: { pagebreak: 'yes' } },
+    { insert: { formula: 'x' } },
+  ], { lang: 'fr', sample: 'true', design: { paper: 'red;x', pattern: '<script>' } }));
+  assert.deepEqual(got.ops, [
+    { insert: 'hi', attributes: { bold: true, size: 3 } },
+    { insert: { image: photo } }, { insert: { image: photo } },
+    { insert: '\n' },
+  ]);
+  assert.equal(got.lang, null);
+  assert.equal(got.sample, false);
+  assert.deepEqual(got.design, normDesign(null));
+});

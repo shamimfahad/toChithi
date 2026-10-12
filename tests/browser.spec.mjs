@@ -129,3 +129,59 @@ test('on a phone there are three tabs and nothing scrolls sideways', async ({ pa
   }
   await expect(page.locator('#copy')).toBeVisible();
 });
+
+test('save a draft, start over, open it: the letter comes back with photo, paper and language', async ({ page }) => {
+  const problems = await open(page);
+  await page.click('[data-lang="en"]');
+  await page.click('#fresh-ask');
+  await page.click('#fresh-yes');
+  await page.locator('.ql-editor').click();
+  await page.keyboard.type('Dear Rafi, half written.');
+  await page.evaluate(() => {
+    const c = document.createElement('canvas'); c.width = 8; c.height = 8;
+    const editor = document.querySelector('#editor').__quill || window.Quill.find(document.querySelector('#editor'));
+    editor.insertEmbed(editor.getLength(), 'image', c.toDataURL('image/png'), 'user');
+  });
+  await page.click('#customize');
+  await page.click('#design [data-preset="graph"]');
+  await page.click('[data-mode="write"]');
+
+  await page.click('#save-ask');
+  await expect(page.locator('#save-veil')).toBeVisible();
+  const [download] = await Promise.all([page.waitForEvent('download'), page.click('#save-draft')]);
+  expect(download.suggestedFilename()).toMatch(/^chithi-\d{4}-\d{2}-\d{2}\.chithi\.json$/);
+  const file = await download.path();
+  const [letter] = await Promise.all([page.waitForEvent('download'), page.click('#save-letter')]);
+  expect(letter.suggestedFilename()).toMatch(/\.html$/);
+  await page.click('#save-close');
+
+  await page.click('[data-lang="bn"]');
+  await page.click('[data-mode="design"]');
+  await page.click('#design [data-preset="airmail"]');
+  await page.click('[data-mode="write"]');
+  await page.locator('.ql-editor').click();
+  await page.keyboard.type(' more');
+  await page.setInputFiles('#draft-input', file);
+  await expect(page.locator('#open-strip')).toBeVisible();
+  await page.click('#open-yes');
+  await expect(page.locator('#open-said')).toBeVisible();
+
+  // Opening is a fresh start: undo does not bring back the letter it replaced.
+  await page.locator('.ql-editor').click();
+  await page.keyboard.press('ControlOrMeta+z');
+  await expect(page.locator('#letter')).toContainText('Dear Rafi, half written.');
+  await expect(page.locator('#letter')).not.toContainText('more');
+  expect(await page.locator('#letter img').count()).toBe(1);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  expect((await saved(page)).design).toMatchObject({ pattern: 'grid', margin: 'none', paper: '#FFFFFF' });
+  expect(problems).toEqual([]);
+});
+
+test('a file that is not a draft changes nothing, and says so in the writing pane on a phone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await open(page);
+  await page.setInputFiles('#draft-input', { name: 'x.chithi.json', mimeType: 'application/json', buffer: Buffer.from('{"format":"nope"}') });
+  await expect(page.locator('#open-said')).toBeVisible();
+  await expect(page.locator('#open-said')).toContainText(/খসড়া ফাইল নয়|not a toChithi draft/);
+  await expect(page.locator('#letter')).toContainText('প্রিয় মা,');
+});

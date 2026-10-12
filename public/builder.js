@@ -517,6 +517,55 @@
     return { html: html, text: text.join('\n').replace(/\n+$/, '') + '\n', pages: pages.length };
   }
 
+  // ---- Draft files: what the writer saves to finish later, and what is let back in when they open one.
+  var DRAFT_FORMAT = 'tochithi-draft';
+  var DRAFT_VERSION = 1;
+  var PHOTO_DATA = /^data:image\/(png|jpeg|gif|webp);base64,[A-Za-z0-9+\/]+=*$/;
+
+  function makeDraft(ops, design, lang, sample) {
+    return { format: DRAFT_FORMAT, version: DRAFT_VERSION, savedAt: new Date().toISOString(), lang: lang, sample: sample === true, design: normDesign(design), ops: ops };
+  }
+
+  // An opened file is someone else's data until proven otherwise: only plain text, photos carried
+  // inside the file, page breaks and simple format values come through. Anything else means null.
+  function readDraft(d, opts) {
+    opts = opts || {};
+    if (!d || typeof d !== 'object' || d.format !== DRAFT_FORMAT || d.version !== DRAFT_VERSION || !Array.isArray(d.ops)) return null;
+    var maxPhotos = typeof opts.maxPhotos === 'number' ? opts.maxPhotos : Infinity;
+    var photos = 0;
+    var ops = [];
+    d.ops.forEach(function (op) {
+      if (!op || typeof op !== 'object') return;
+      var insert = null;
+      if (typeof op.insert === 'string') insert = op.insert;
+      else if (op.insert && typeof op.insert === 'object') {
+        if (typeof op.insert.image === 'string' && PHOTO_DATA.test(op.insert.image) && photos < maxPhotos) { photos += 1; insert = { image: op.insert.image }; }
+        else if (op.insert.pagebreak === true) insert = { pagebreak: true };
+      }
+      if (insert === null || insert === '') return;
+      var out = { insert: insert };
+      if (op.attributes && typeof op.attributes === 'object' && !Array.isArray(op.attributes)) {
+        var a = {};
+        Object.keys(op.attributes).forEach(function (k) {
+          var v = op.attributes[k];
+          if (typeof v === 'string' || typeof v === 'boolean' || (typeof v === 'number' && isFinite(v))) a[k] = v;
+        });
+        if (Object.keys(a).length) out.attributes = a;
+      }
+      ops.push(out);
+    });
+    if (!ops.length) return null;
+    var last = ops[ops.length - 1];
+    if (typeof last.insert !== 'string' || last.insert.slice(-1) !== '\n') ops.push({ insert: '\n' });
+    var langs = Array.isArray(opts.langs) ? opts.langs : [];
+    return {
+      ops: ops,
+      design: normDesign(d.design),
+      lang: langs.indexOf(d.lang) >= 0 ? d.lang : null,
+      sample: d.sample === true
+    };
+  }
+
   var api = {
     BN_FONTS: BN_FONTS,
     LETTERINGS: LETTERINGS,
@@ -540,7 +589,10 @@
     normDesign: normDesign,
     safeLink: safeLink,
     safeImage: safeImage,
-    buildLetter: buildLetter
+    buildLetter: buildLetter,
+    DRAFT_FORMAT: DRAFT_FORMAT,
+    makeDraft: makeDraft,
+    readDraft: readDraft
   };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.Chithi = api;
