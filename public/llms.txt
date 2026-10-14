@@ -1,0 +1,25 @@
+# toChithi (চিঠি)
+
+> A free web tool that turns an email into a letter on notebook paper. You write in a rich text editor, choose the stationery, and copy the finished letter into Gmail, Outlook, Yahoo Mail or Apple Mail. It runs in the browser; nothing you write is uploaded. English and Bangla.
+
+- [toChithi in English](https://tochithi.vercel.app/)
+- [চিঠি, বাংলায়](https://tochithi.vercel.app/bn/)
+- [Source code](https://github.com/shamimfahad/toChithi)
+
+## What it does
+
+- Rich text editor: bold, italic, underline, highlighter, red pen, headings, quotes and lists
+- Nine papers: notebook, yellow pad, blue paper, pink pad, graph paper, airmail, plain, kraft and night
+- Custom stationery: paper colour, ruled lines or grid, margin line, edge, ink and lettering
+- One-click date, greeting, sign-off and P.S.
+- Photos shown as taped-on prints
+- Templates: personal letter, thank-you note, invitation and formal application
+- Copy into Gmail, Outlook, Yahoo Mail or Apple Mail; save as a PNG image or copy the HTML
+- English and Bangla
+- Runs in the browser; nothing is uploaded
+
+## Good to know
+
+- চিঠি (chithi) means "letter" in Bangla.
+- The letter is built from inline-styled tables so it survives pasting into email editors. Ruled lines are the most delicate part; where an email program drops them, the paper colour, margin line and layout remain.
+- No account, no server, no cost. Drafts are kept in the browser and can be saved to a file.

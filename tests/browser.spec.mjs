@@ -185,3 +185,43 @@ test('a file that is not a draft changes nothing, and says so in the writing pan
   await expect(page.locator('#open-said')).toContainText(/খসড়া ফাইল নয়|not a toChithi draft/);
   await expect(page.locator('#letter')).toContainText('প্রিয় মা,');
 });
+
+test('the Bangla page opens in Bangla, even for an English browser with an English draft saved', async ({ browser }) => {
+  const context = await browser.newContext({ locale: 'en-GB' });
+  const page = await context.newPage();
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#tab-write')).toHaveText('Write');
+  await page.goto('/bn/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'bn');
+  await expect(page.locator('#tab-write')).toHaveText('লিখুন');
+  await expect(page.locator('#letter')).toContainText('প্রিয় মা,');
+  await expect(page.locator('.about h2')).toHaveText('শুধু ইমেইল নয়, একটা চিঠি');
+  await context.close();
+});
+
+test('/bn moves to /bn/, so the page has one address', async ({ page }) => {
+  const response = await page.request.get('/bn', { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+  expect(response.headers().location).toBe('/bn/');
+});
+
+test('without JavaScript, both pages still say what the tool is', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  for (const [path, words] of [['/', 'paste it into any email'], ['/bn/', 'যেকোনো ইমেইলে পেস্ট করুন']]) {
+    await page.goto(path);
+    await expect(page.locator('h1')).toContainText('চিঠি');
+    await expect(page.locator('.tagline')).toContainText(words);
+    await expect(page.locator('.about')).toBeVisible();
+  }
+  await context.close();
+});
+
+test('the about section sits under the app and does not push the phone page sideways', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await open(page);
+  await page.locator('.about').scrollIntoViewIfNeeded();
+  await expect(page.locator('.about')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
+});

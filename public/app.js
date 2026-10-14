@@ -255,7 +255,10 @@
   }
 
   // A small painted "photograph" for the sample letter, so nothing is fetched.
+  var samplePhotoUrl = '';
   function samplePhoto() {
+    // Painting and encoding it takes a noticeable moment on a phone, so it is done once per visit.
+    if (samplePhotoUrl) return samplePhotoUrl;
     var c = document.createElement('canvas');
     c.width = 880; c.height = 540;
     var x = c.getContext('2d');
@@ -276,7 +279,8 @@
     x.fillStyle = '#f4ead2'; x.beginPath(); x.moveTo(424, 304); x.quadraticCurveTo(510, 350, 424, 418); x.fill();
     x.strokeStyle = '#f7f3e6'; x.lineWidth = 3;
     for (var k = 0; k < 14; k++) { var bx = 20 + k * 22; x.beginPath(); x.moveTo(bx, 540); x.quadraticCurveTo(bx + 6, 470, bx + 22 + (k % 4) * 4, 430 + (k % 3) * 16); x.stroke(); }
-    return c.toDataURL('image/jpeg', 0.86);
+    samplePhotoUrl = c.toDataURL('image/jpeg', 0.86);
+    return samplePhotoUrl;
   }
 
   var LETTERS = {
@@ -286,7 +290,7 @@
           ['Dhaka, ' + today(), R],
           ['Dear Ma,'],
           [[['How are you? It has been far too long since I wrote you a proper letter. '], ['Autumn skies', { bold: true }], [' have arrived here, and '], ['from the roof you can watch white clouds drift past', { background: MARKER }], ['. Last Friday I went down to the river and took a photograph for you.']]],
-          [[[{ image: samplePhoto() }, { width: '75%' }]]],
+          [[[{ image: samplePhoto() }, { width: '75%', alt: t('photo') }]]],
           ['When I was small you always used to say:'],
           ['Look after a thing and it turns to treasure.', { blockquote: true }],
           ['What I am bringing when I come home:'],
@@ -364,7 +368,7 @@
           ['ঢাকা, ' + today(), R],
           ['প্রিয় মা,'],
           [[['কেমন আছ? অনেক দিন তোমাকে চিঠি লেখা হয় না। এখানে '], ['শরতের আকাশ', { bold: true }], [' দেখা দিয়েছে, '], ['ছাদ থেকে সাদা মেঘের ভেলা দেখা যায়', { background: MARKER }], ['। গত শুক্রবার নদীর ধারে গিয়েছিলাম, তোমার জন্য একটা ছবি তুলে এনেছি।']]],
-          [[[{ image: samplePhoto() }, { width: '75%' }]]],
+          [[[{ image: samplePhoto() }, { width: '75%', alt: t('photo') }]]],
           ['ছোটবেলায় তুমি সব সময় বলতে:'],
           ['যত্ন করলে রত্ন মেলে।', { blockquote: true }],
           ['বাড়ি আসার সময় যা যা আনব:'],
@@ -537,22 +541,25 @@
     box.innerHTML = '';
     return heights;
   }
+  // A photo's height/width, learnt once it has loaded. Until then pages are laid out with a guess,
+  // and the letter gives the photo no height (exactRatio is 0), so a guess never stretches it.
   var ratios = {};
-  function photoRatio(src) {
+  function exactRatio(src) {
     var key = src.length + ':' + src.slice(-48);
     if (own(ratios, key)) return ratios[key];
-    ratios[key] = 0.62;
+    ratios[key] = 0;
     var img = new Image();
     img.onload = function () {
       if (img.naturalWidth) { ratios[key] = img.naturalHeight / img.naturalWidth; renderSoon(); }
     };
     img.src = src;
-    return ratios[key];
+    return 0;
   }
+  function photoRatio(src) { return exactRatio(src) || 0.62; }
 
   var timer = 0;
   function render() {
-    built = buildLetter(quill.getContents().ops, state.design, { photoWord: t('photoWord'), measure: measure, ratio: photoRatio });
+    built = buildLetter(quill.getContents().ops, state.design, { photoWord: t('photoWord'), measure: measure, ratio: photoRatio, exactRatio: exactRatio });
     $('letter').innerHTML = built.html;
     countWords();
   }
@@ -776,6 +783,8 @@
         var found = quill.getLine(at);
         if (found[0] && found[1] > 0) { quill.insertText(at, '\n', 'user'); at += 1; }
         quill.insertEmbed(at, 'image', dataUrl, 'user');
+        // Named for screen readers in the writing pad; the letter itself marks photos as decorative.
+        quill.formatText(at, 1, 'alt', t('photo'), 'user');
         quill.insertText(at + 1, '\n', 'user');
         at += 2;
         quill.setSelection(at, 0, 'silent');
@@ -1293,35 +1302,53 @@
     return Promise.resolve();
   }
 
+  // The image maker is a large library that most visits never use, so it is fetched on the first click.
+  var imageLib = null;
+  function loadImageLib() {
+    if (window.html2canvas) return Promise.resolve();
+    if (!imageLib) {
+      imageLib = new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = '/vendor/html2canvas.min.js';
+        s.onload = function () { if (window.html2canvas) resolve(); else reject(new Error('missing')); };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      imageLib.catch(function () { imageLib = null; });
+    }
+    return imageLib;
+  }
+
   $('as-image').addEventListener('click', function () {
-    if (!window.html2canvas) { say('imageLib'); return; }
     clearTimeout(timer);
     render();
     say('making');
     var off = $('offstage');
-    off.style.width = (WIDTHS[state.design.width] || WIDE_GUESS) + 'px';
-    off.innerHTML = built.html;
-    var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    ready.then(function () {
-      return window.html2canvas(off, { scale: 2, backgroundColor: built.pages > 1 ? '#ffffff' : null, useCORS: true, logging: false });
-    }).then(function (canvas) {
-      return new Promise(function (resolve, reject) {
-        canvas.toBlob(function (blob) { if (blob) resolve(blob); else reject(new Error('empty')); }, 'image/png');
+    loadImageLib().then(function () {
+      off.style.width = (WIDTHS[state.design.width] || WIDE_GUESS) + 'px';
+      off.innerHTML = built.html;
+      var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      ready.then(function () {
+        return window.html2canvas(off, { scale: 2, backgroundColor: built.pages > 1 ? '#ffffff' : null, useCORS: true, logging: false });
+      }).then(function (canvas) {
+        return new Promise(function (resolve, reject) {
+          canvas.toBlob(function (blob) { if (blob) resolve(blob); else reject(new Error('empty')); }, 'image/png');
+        });
+      }).then(function (blob) {
+        off.innerHTML = '';
+        shotBlob = blob;
+        if (shotUrl) URL.revokeObjectURL(shotUrl);
+        shotUrl = URL.createObjectURL(blob);
+        $('shot').src = shotUrl;
+        $('image-said').textContent = '';
+        $('image-veil').hidden = false;
+        $('image-copy').focus();
+        say('');
+      }).catch(function () {
+        off.innerHTML = '';
+        say('imageFail');
       });
-    }).then(function (blob) {
-      off.innerHTML = '';
-      shotBlob = blob;
-      if (shotUrl) URL.revokeObjectURL(shotUrl);
-      shotUrl = URL.createObjectURL(blob);
-      $('shot').src = shotUrl;
-      $('image-said').textContent = '';
-      $('image-veil').hidden = false;
-      $('image-copy').focus();
-      say('');
-    }).catch(function () {
-      off.innerHTML = '';
-      say('imageFail');
-    });
+    }, function () { say('imageLib'); });
   });
   $('image-copy').addEventListener('click', function () {
     var note = $('image-said');
@@ -1453,7 +1480,9 @@
   }
 
   var saved = load();
-  state.lang = saved && own(LANGS, saved.lang) ? saved.lang : saved ? 'bn' : firstLang();
+  // A page made for one language (/bn/) opens in it. The main page follows the saved draft, then the browser.
+  var pageLang = document.documentElement.getAttribute('data-page-lang');
+  state.lang = own(LANGS, pageLang) ? pageLang : saved && own(LANGS, saved.lang) ? saved.lang : saved ? 'bn' : firstLang();
   state.design = designFrom(saved);
   if (saved) {
     quill.setContents(saved.sample ? letterFor('sample') : saved.ops, 'silent');
@@ -1464,7 +1493,19 @@
   }
   quill.history.clear();
   applyLang();
-  render();
+  // The panes are hidden until now (styles.css): showing them half-built would make everything jump
+  // as labels and papers arrive. Photos in the writing pad are decoded and the fonts in use loaded
+  // first, so text and photos appear at their size; after 1.5 s the page is shown regardless. The letter is laid out
+  // just after: it sits in a fixed, scrolling frame, so arriving a moment later moves nothing, and the
+  // writing pad appears sooner (on a phone the letter is on another tab anyway).
+  var decoded = Array.prototype.map.call(document.querySelectorAll('#editor img'), function (img) {
+    return img.decode ? img.decode().catch(function () {}) : null;
+  });
+  if (document.fonts && document.fonts.ready) decoded.push(document.fonts.ready);
+  Promise.race([Promise.all(decoded), new Promise(function (resolve) { setTimeout(resolve, 1500); })]).then(function () {
+    $('app').classList.add('is-ready');
+    setTimeout(render, 0);
+  });
   // Page breaks depend on how wide the letters are, so lay the letter out again once the fonts are in.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { render(); });
 

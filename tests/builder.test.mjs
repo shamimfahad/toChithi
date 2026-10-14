@@ -172,3 +172,12 @@ test('an opened file lets in only text, carried photos, page breaks and plain va
   assert.equal(got.sample, false);
   assert.deepEqual(got.design, normDesign(null));
 });
+
+test('a photo gets a height only when its true shape is known', () => {
+  const ops = [{ insert: { image: 'data:image/png;base64,iVBORw0KGgo=' }, attributes: { width: '50%' } }, { insert: '\n' }];
+  const img = (html) => html.match(/<img [^>]+>/)[0];
+  assert.doesNotMatch(img(buildLetter(ops, {}).html), /height="/, 'no guess is written into the letter');
+  assert.doesNotMatch(img(buildLetter(ops, {}, { exactRatio: () => 0 }).html), /height="/);
+  assert.match(img(buildLetter(ops, {}, { exactRatio: () => 0.5 }).html), /width="250" height="125"/);
+  assert.doesNotMatch(img(buildLetter(ops, {}, { exactRatio: () => 'x" onerror="' }).html), /onerror/);
+});

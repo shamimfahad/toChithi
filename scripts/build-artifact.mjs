@@ -6,7 +6,10 @@ const read = (name) => readFile(new URL(`../public/${name}`, import.meta.url), '
 const [html, css, builder, app] = await Promise.all([read('index.html'), read('styles.css'), read('builder.js'), read('app.js')]);
 
 const markup = html.slice(html.indexOf('<!-- app:start -->') + '<!-- app:start -->'.length, html.indexOf('<!-- app:end -->')).trim();
-const fonts = html.match(/<link rel="(?:preconnect|stylesheet)" href="https:\/\/fonts\.[^>]+>/g).join('\n');
+// The hosted site serves its own fonts (public/fonts/); an artifact can only load them from Google Fonts.
+const fonts = `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Atma:wght@400;600&family=Kalam:wght@400;700&family=Tiro+Bangla:ital@0;1&display=swap">`;
 
 const page = `<title>চিঠি</title>
 ${fonts}

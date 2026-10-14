@@ -318,7 +318,7 @@
         '<table ' + TABLE + ' align="center" style="margin:0 auto;"><tr><td width="74" height="15" bgcolor="' + look.tape + '" style="width:74px;height:15px;font-size:0;line-height:0;background-color:' + look.tape + ';">&nbsp;</td></tr></table>' +
       '</td></tr>' +
       '<tr><td bgcolor="#FFFFFF" style="padding:7px;background-color:#FFFFFF;border:1px solid ' + look.tape + ';font-size:0;line-height:0;">' +
-        '<img src="' + esc(block.image) + '" width="' + pixels + '" alt="" style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;">' +
+        '<img src="' + esc(block.image) + '" width="' + pixels + '"' + (block.ratio ? ' height="' + Math.round(pixels * block.ratio) + '"' : '') + ' alt="" style="display:block;width:100%;max-width:100%;height:auto;border:0;outline:none;">' +
       '</td></tr></table>';
   }
 
@@ -492,6 +492,15 @@
       line: d.spacing
     };
     var measure = { measure: typeof opts.measure === 'function' ? opts.measure : null, ratio: typeof opts.ratio === 'function' ? opts.ratio : function () { return 0.62; } };
+    // A photo whose true shape is known also gets a height, so it keeps its shape where an email
+    // program sizes images from their attributes (Outlook on Windows) and before it has loaded.
+    if (typeof opts.exactRatio === 'function') {
+      blocks.forEach(function (b) {
+        if (!b.image) return;
+        var r = Number(opts.exactRatio(b.image));
+        if (isFinite(r) && r > 0.05 && r < 20) b.ratio = r;
+      });
+    }
 
     var maxWidth = WIDTHS[d.width];
     var lay = layout(d, maxWidth || WIDE_GUESS);

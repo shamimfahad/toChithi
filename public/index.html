@@ -3,22 +3,109 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>চিঠি</title>
-<meta name="description" content="Write an email as a চিঠি: a page from a ruled letter notebook. Design the paper, copy the letter, and paste it into any email. Nothing you write is uploaded.">
+<!-- Made by scripts/pages.mjs. Edit the app markup between app:start and app:end in public/index.html, the rest in scripts/pages.mjs, then run npm run pages. -->
+<title>toChithi — turn an email into a letter on notebook paper</title>
+<meta name="google-site-verification" content="VZJyCu79dKcMXCg11ZlkQVG-ZN_z5rk-3ZvDzS_hc6g">
+<meta name="description" content="Write a letter on ruled notebook, airmail or graph paper, then paste it into Gmail, Outlook or any email. Free, in English and Bangla. Nothing is uploaded.">
+<link rel="canonical" href="https://tochithi.vercel.app/">
+<link rel="alternate" hreflang="en" href="https://tochithi.vercel.app/">
+<link rel="alternate" hreflang="bn" href="https://tochithi.vercel.app/bn/">
+<link rel="alternate" hreflang="x-default" href="https://tochithi.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="toChithi">
+<meta property="og:url" content="https://tochithi.vercel.app/">
+<meta property="og:title" content="toChithi — turn an email into a letter on notebook paper">
+<meta property="og:description" content="Write a letter on ruled notebook, airmail or graph paper, then paste it into Gmail, Outlook or any email. Free, in English and Bangla. Nothing is uploaded.">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="bn_BD">
+<meta property="og:image" content="https://tochithi.vercel.app/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A letter on ruled notebook paper, with the words: turn an email into a letter.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="toChithi — turn an email into a letter on notebook paper">
+<meta name="twitter:description" content="Write a letter on ruled notebook, airmail or graph paper, then paste it into Gmail, Outlook or any email. Free, in English and Bangla. Nothing is uploaded.">
+<meta name="twitter:image" content="https://tochithi.vercel.app/og-en.png">
+<meta name="twitter:image:alt" content="A letter on ruled notebook paper, with the words: turn an email into a letter.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://tochithi.vercel.app/#website",
+      "name": "toChithi",
+      "alternateName": [
+        "চিঠি",
+        "Chithi"
+      ],
+      "url": "https://tochithi.vercel.app/",
+      "inLanguage": [
+        "en",
+        "bn"
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://tochithi.vercel.app/#app",
+      "name": "toChithi",
+      "alternateName": "চিঠি",
+      "url": "https://tochithi.vercel.app/",
+      "description": "Write a letter on ruled notebook, airmail or graph paper, then paste it into Gmail, Outlook or any email. Free, in English and Bangla. Nothing is uploaded.",
+      "inLanguage": "en",
+      "applicationCategory": "CommunicationApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Rich text editor: bold, italic, underline, highlighter, red pen, headings, quotes and lists",
+        "Nine papers: notebook, yellow pad, blue paper, pink pad, graph paper, airmail, plain, kraft and night",
+        "Custom stationery: paper colour, ruled lines or grid, margin line, edge, ink and lettering",
+        "One-click date, greeting, sign-off and P.S.",
+        "Photos shown as taped-on prints",
+        "Templates: personal letter, thank-you note, invitation and formal application",
+        "Copy into Gmail, Outlook, Yahoo Mail or Apple Mail; save as a PNG image or copy the HTML",
+        "English and Bangla",
+        "Runs in the browser; nothing is uploaded"
+      ],
+      "image": "https://tochithi.vercel.app/og-en.png",
+      "screenshot": "https://tochithi.vercel.app/og-en.png",
+      "isPartOf": {
+        "@id": "https://tochithi.vercel.app/#website"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Shamim Fahad",
+        "url": "https://github.com/shamimfahad"
+      }
+    }
+  ]
+}
+</script>
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Atma:wght@400;600&family=Kalam:wght@400;700&family=Tiro+Bangla:ital@0;1&display=swap">
-<link rel="stylesheet" href="styles.css">
+<meta name="theme-color" content="#e4e9ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1e2227" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/fonts/anek-bangla-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/tiro-bangla-wordmark-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/tiro-bangla-wordmark-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<noscript><p class="noscript">toChithi needs JavaScript to write and copy letters. Turn it on for this site and reload the page.</p></noscript>
 <!-- app:start -->
 <div class="app" id="app">
   <header class="bar">
     <div class="brand">
-      <h1 class="mark"><span lang="bn">চিঠি</span><span class="mark-latin" id="mark-latin" data-t="markLatin"></span></h1>
-      <p class="tagline" data-t="tagline"></p>
+      <h1 class="mark"><span lang="bn">চিঠি</span><span class="mark-latin" id="mark-latin" data-t="markLatin">Chithi</span></h1>
+      <p class="tagline" data-t="tagline">Write a letter, copy it, and paste it into any email. Nothing you write is uploaded.</p>
     </div>
     <div class="bar-end">
       <div class="seg" id="langs" role="group" data-aria="language"></div>
@@ -47,21 +134,21 @@
           <button class="tool" type="button" id="tool-redo" data-tip="redo"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13 4l4 4-4 4"/><path d="M17 8H8.5a4.5 4.5 0 0 0 0 9H12"/></svg></button>
         </div>
         <div class="group">
-          <button class="tool" type="button" data-inline="bold" aria-pressed="false" data-tip="bold" data-key="B"><span class="glyph glyph-b" data-glyph="b"></span></button>
-          <button class="tool" type="button" data-inline="italic" aria-pressed="false" data-tip="italic" data-key="I"><span class="glyph glyph-i" data-glyph="i"></span></button>
-          <button class="tool" type="button" data-inline="underline" aria-pressed="false" data-tip="underline" data-key="U"><span class="glyph glyph-u" data-glyph="u"></span></button>
-          <button class="tool" type="button" data-inline="strike" aria-pressed="false" data-tip="strike"><span class="glyph glyph-s" data-glyph="s"></span></button>
-          <button class="tool" type="button" data-inline="background" aria-pressed="false" data-tip="highlight"><span class="glyph glyph-hl" data-glyph="a"></span></button>
-          <button class="tool" type="button" data-inline="color" aria-pressed="false" data-tip="red"><span class="glyph glyph-red" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-inline="bold" aria-pressed="false" data-tip="bold" data-key="B"><span aria-hidden="true" class="glyph glyph-b" data-glyph="b"></span></button>
+          <button class="tool" type="button" data-inline="italic" aria-pressed="false" data-tip="italic" data-key="I"><span aria-hidden="true" class="glyph glyph-i" data-glyph="i"></span></button>
+          <button class="tool" type="button" data-inline="underline" aria-pressed="false" data-tip="underline" data-key="U"><span aria-hidden="true" class="glyph glyph-u" data-glyph="u"></span></button>
+          <button class="tool" type="button" data-inline="strike" aria-pressed="false" data-tip="strike"><span aria-hidden="true" class="glyph glyph-s" data-glyph="s"></span></button>
+          <button class="tool" type="button" data-inline="background" aria-pressed="false" data-tip="highlight"><span aria-hidden="true" class="glyph glyph-hl" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-inline="color" aria-pressed="false" data-tip="red"><span aria-hidden="true" class="glyph glyph-red" data-glyph="a"></span></button>
         </div>
         <div class="group">
-          <button class="tool" type="button" data-block="header" data-value="1" aria-pressed="false" data-tip="h1"><span class="glyph glyph-h1" data-glyph="a"></span></button>
-          <button class="tool" type="button" data-block="header" data-value="2" aria-pressed="false" data-tip="h2"><span class="glyph glyph-h2" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-block="header" data-value="1" aria-pressed="false" data-tip="h1"><span aria-hidden="true" class="glyph glyph-h1" data-glyph="a"></span></button>
+          <button class="tool" type="button" data-block="header" data-value="2" aria-pressed="false" data-tip="h2"><span aria-hidden="true" class="glyph glyph-h2" data-glyph="a"></span></button>
           <button class="tool" type="button" data-block="blockquote" data-value="true" aria-pressed="false" data-tip="quote"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 12.5V10a4.5 4.5 0 0 1 4-4.5M4 12.5h3.5V9.5H4M11.5 12.5V10a4.5 4.5 0 0 1 4-4.5M11.5 12.5H15V9.5h-3.5"/></svg></button>
         </div>
         <div class="group">
           <button class="tool" type="button" data-block="list" data-value="bullet" aria-pressed="false" data-tip="bullets"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="3.5" cy="5" r="1"/><circle cx="3.5" cy="10" r="1"/><circle cx="3.5" cy="15" r="1"/><path d="M8 5h9M8 10h9M8 15h9"/></svg></button>
-          <button class="tool" type="button" data-block="list" data-value="ordered" aria-pressed="false" data-tip="numbers"><span class="glyph" data-glyph="ol"></span></button>
+          <button class="tool" type="button" data-block="list" data-value="ordered" aria-pressed="false" data-tip="numbers"><span aria-hidden="true" class="glyph" data-glyph="ol"></span></button>
         </div>
         <div class="group">
           <button class="tool" type="button" data-block="align" data-value="" aria-pressed="false" data-tip="left"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h9M3 15h12"/></svg></button>
@@ -221,9 +308,52 @@
 <div class="offstage" id="offstage" aria-hidden="true"></div>
 <div id="measure" aria-hidden="true"></div>
 <!-- app:end -->
-<script src="vendor/quill.js"></script>
-<script src="vendor/html2canvas.min.js"></script>
-<script src="builder.js"></script>
-<script src="app.js"></script>
+<!-- about:start -->
+<section class="about" lang="en" aria-labelledby="about-title">
+  <div class="about-lead">
+    <h2 id="about-title">A letter, not just another email</h2>
+    <p><strong>toChithi</strong> (<span lang="bn">চিঠি</span> means “letter” in Bangla) turns what you type into a page from a ruled letter notebook: the margin line, the date in the corner, the greeting, your words and your sign-off. Copy it into Gmail, Outlook, Yahoo Mail or Apple Mail and it arrives as a letter, not a block of plain text. The person you write to needs nothing installed.</p>
+  </div>
+  <div class="about-cols">
+    <div>
+      <h3>How it works</h3>
+      <ol>
+        <li><strong>Write.</strong> Format your words and add the date, a greeting, photos and a P.S.</li>
+        <li><strong>Choose the paper.</strong> Notebook, yellow pad, blue paper, pink pad, graph paper, airmail, plain, kraft or night, or design your own: lines, margin, edge, ink and lettering.</li>
+        <li><strong>Copy and paste</strong> into any email. You can also save the letter as a PNG image, or copy its HTML for a newsletter tool.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>For every kind of letter</h3>
+      <p>Start from a template: a personal letter, a thank-you note, an invitation or a formal application. Write in English or Bangla; dates and numerals follow the language you choose.</p>
+      <h3>Private by design</h3>
+      <p>Everything runs in your browser. Nothing you write is uploaded, there is no account to make, and it is free. Your draft stays on your device; save it as a file to carry it to another computer. The <a href="https://github.com/shamimfahad/toChithi" rel="noopener">source code is on GitHub</a>.</p>
+    </div>
+    <div>
+      <h3>Questions</h3>
+      <details>
+        <summary>Does the letter keep its look in Gmail and Outlook?</summary>
+        <p>The letter is built from plain tables with inline styles, which email editors keep when you paste. Ruled lines are the most delicate part: where an email program drops them, the paper colour, margin line and layout remain. Airmail and plain paper use only colours and borders.</p>
+      </details>
+      <details>
+        <summary>Can I send it as an image?</summary>
+        <p>Yes. Make a PNG image of the letter and attach it, or share it anywhere a picture goes. An image also keeps handwritten lettering exactly as you see it.</p>
+      </details>
+      <details>
+        <summary>Can I write in Bangla?</summary>
+        <p>Yes. Switch the page to <span lang="bn">বাংলা</span>: the sample letter, templates, date and numerals change with it.</p>
+      </details>
+      <details>
+        <summary>Is it really free?</summary>
+        <p>Yes, with no sign-up and no adverts. It is a static page with no server behind it, so there is nothing to pay for.</p>
+      </details>
+    </div>
+  </div>
+  <p class="about-foot"><a href="/bn/" hreflang="bn" lang="bn">বাংলায় পড়ুন</a></p>
+</section>
+<!-- about:end -->
+<script src="/vendor/quill.js" defer fetchpriority="high"></script>
+<script src="/builder.js" defer fetchpriority="high"></script>
+<script src="/app.js" defer fetchpriority="high"></script>
 </body>
 </html>

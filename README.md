@@ -11,7 +11,7 @@ Needs Node.js 20 or newer (only for the local server and the tests; the site its
 
 ```bash
 npm start            # http://localhost:4173
-npm test             # letter builder and config tests
+npm test             # letter builder, config and page tests
 npm run test:browser # the whole page in a real browser
 ```
 
@@ -28,6 +28,67 @@ The site is the `public/` folder exactly as it is. There is no build step.
 | No git | Drag the `public/` folder onto [app.netlify.com/drop](https://app.netlify.com/drop). This skips the security headers, so use it for a quick look only. |
 
 After the first import, every push to the main branch redeploys.
+
+## Search and sharing
+
+There are two pages: `/` in English and `/bn/` in Bangla. Both are written by `npm run pages`
+from one source, so the app markup is never copied by hand:
+
+- **The app markup** lives in `public/index.html` between `<!-- app:start -->` and `<!-- app:end -->`.
+- **Everything else** lives in `scripts/pages.mjs`: titles, descriptions, language links, share cards,
+  structured data, the short "about" text under the app, `sitemap.xml`, `robots.txt` and `llms.txt`.
+
+After changing either, run `npm run pages`. `tests/pages.test.mjs` fails if a page is out of date.
+
+What each piece is for:
+
+| Piece | Why |
+| --- | --- |
+| Words in the HTML itself (brand line, about section, questions) | Google runs the script before indexing, but Bing is less reliable and AI crawlers (GPTBot, ClaudeBot, PerplexityBot) do not run scripts at all. Without this they would see empty buttons. |
+| `/bn/` as its own address, with `hreflang` both ways and `x-default` → `/` | Search engines index one language per address. A page that only switches language in the browser is found in one language. `/bn/` always opens in Bangla; `/` follows the saved draft, then the browser. |
+| Title and description per language | What a search result shows. Bangla searches are answered by the Bangla page, in Bangla. |
+| `og:` and `twitter:` tags, `og-en.png` and `og-bn.png` (1200 × 630) | The card shown when the link is shared on Facebook, WhatsApp, LinkedIn, X or Slack. |
+| JSON-LD: `WebSite` and `WebApplication` | Gives Google the site name (toChithi, also চিঠি) and says this is a free web app. There is no rating in it: there are no reviews yet, and invented ones break Google's rules. |
+| `sitemap.xml`, `robots.txt` | Lists both pages with their language links; lets every crawler in. |
+| `llms.txt` | A plain summary for AI tools. No search engine is known to rank by it; it costs nothing. |
+| `"trailingSlash": true` in `vercel.json` | `/bn` moves to `/bn/`, so a page never has two addresses. |
+
+To change the domain, edit `SITE` in `scripts/pages.mjs` and run `npm run pages`.
+
+### Speed
+
+Lighthouse on the local server (`npm start`, which compresses like the hosts do): desktop 98–99 for
+performance and 100 for accessibility, best practices, SEO and agentic browsing, on both pages.
+Simulated slow phones score lower (around 80 in English, high 70s in Bangla), mostly from the editor
+library starting up and the Bengali fonts (150 KB and 80 KB) needed for a Bangla first screen.
+
+What keeps it fast and still:
+
+- **Nothing jumps.** The panes stay hidden until `app.js` has built them, the writing pad's photos
+  have decoded and the fonts in use have loaded (1.5 s at most). The letter is laid out just after,
+  inside its fixed frame. On a phone, the app is at least one screen tall from the first paint.
+- **Fonts are served from this site** (`public/fonts.css`, `public/fonts/`, SIL Open Font Licence) — no
+  third-party request, and no visitor's address goes to Google. The wordmark uses a 3 KB cut of
+  Tiro Bangla; the English page's few Bangla words use a 6 KB cut of Anek Bangla, so the full
+  Bengali fonts load only when they are needed. The cuts were made with
+  `pyftsubset <font> --text="…" --layout-features='*' --flavor=woff2`.
+- **Scripts are deferred**, and html2canvas (200 KB) loads only when someone makes an image.
+- **Photos in a letter get a height** once their shape is known, so they keep their shape in Outlook
+  and before they load.
+
+### After the first deploy (needs your Google and Microsoft accounts)
+
+1. **Google Search Console** → add a *URL prefix* property for `https://tochithi.vercel.app/`. A
+   `vercel.app` address can't be verified by DNS, so choose *HTML tag*, put the tag in the `head()` list in
+   `scripts/pages.mjs`, run `npm run pages` and deploy. Then submit `sitemap.xml`, and use *URL inspection*
+   → *Request indexing* for `/` and `/bn/`.
+2. **Bing Webmaster Tools** → *Import from Google Search Console*. Bing's index also supplies Yahoo and much of DuckDuckGo, and is one of the sources behind ChatGPT search.
+3. Paste both addresses into the [Rich Results Test](https://search.google.com/test/rich-results) and a
+   share-preview checker to confirm the cards.
+
+Links from other sites matter more than anything on the page. Good places to be mentioned: Product Hunt,
+Show HN, r/bangladesh, Bangla tech groups and blogs, and the GitHub README with the site address in the
+repository's *About* box.
 
 ## How a letter is built
 
@@ -80,13 +141,19 @@ inlined and the libraries loaded from a CDN. That file is what is published as t
 ## Files
 
 ```
-public/index.html     the page
+public/index.html     the English page; the app markup is edited here
+public/bn/index.html  the Bangla page (made by npm run pages)
+public/og-*.png       share cards; apple-touch-icon.png
+public/fonts.css, fonts/   the typefaces, self-hosted, with their licences
+public/sitemap.xml, robots.txt, llms.txt   for crawlers (made by npm run pages)
 public/styles.css     all styles, light and dark
 public/builder.js     editor content + stationery -> email HTML
 public/app.js         editor, stationery panel, preview, copy and export
 public/vendor/        Quill 2.0.2 and html2canvas 1.4.1, with their licences
 scripts/serve.mjs     local static server with the production headers
 scripts/headers.mjs   the security headers, in one place
+scripts/pages.mjs     titles, descriptions, share cards, structured data, about text
+scripts/build-pages.mjs  writes the pages and crawler files
 scripts/build-artifact.mjs
 tests/                builder, config and browser tests
 netlify.toml, vercel.json
