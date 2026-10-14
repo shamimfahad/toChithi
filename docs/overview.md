@@ -38,7 +38,6 @@ The converter is now a small repository, `tochithi`, ready to push:
 - `public/` is the site: `index.html`, `styles.css`, `builder.js` (the only code that writes email markup, testable on its own), `app.js` (editor, stationery panel, preview, copy and export) and `vendor/`.
 - `netlify.toml` and `vercel.json` publish `public/` with no build step and set the security headers (Content-Security-Policy with `script-src 'self'`).
 - `npm test` runs 15 builder and config tests; `npm run test:browser` runs 10 Playwright tests against the site served with the production headers.
-- `npm run artifact` packs the site into one file for the চিঠি artifact, which is published from it.
 - **Status:** committed locally; not yet pushed or deployed. Pushing needs a GitHub repository; deploying needs the repository imported once in Netlify or Vercel.
 
 ## Earlier build: Gmail-sending app (kept, independent)
