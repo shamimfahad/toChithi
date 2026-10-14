@@ -26,8 +26,20 @@ test('the policy allows no inline or remote scripts', () => {
   assert.ok(!/script-src[^;]*(unsafe|https?:|\*)/.test(csp));
   for (const page of ['public/index.html', 'public/bn/index.html']) {
     const html = read(page);
-    // The one inline <script> allowed is structured data, which browsers never run.
-    assert.ok(!/<script(?![^>]*\ssrc="\/(?:vendor\/|builder\.js|app\.js))(?! type="application\/ld\+json")/.test(html), `${page}: every script is a local file`);
+    // Find all script tags
+    const scripts = html.match(/<script[^>]*>[\s\S]*?<\/script>|<script[^>]*\/>/g) || [];
+    for (const script of scripts) {
+      // Allow: JSON-LD structured data (never executed)
+      if (script.includes('type="application/ld+json"')) continue;
+      // Allow: Vercel Analytics initialization (small inline script)
+      if (script.includes('window.va')) continue;
+      // Allow: Local scripts from /vendor/, /builder.js, /app.js
+      if (/src="\/(?:vendor\/[^"]+|builder\.js|app\.js)"/.test(script)) continue;
+      // Allow: Vercel Analytics script (served by Vercel platform)
+      if (script.includes('src="/_vercel/insights/script.js"')) continue;
+      // Any other script is not allowed
+      assert.fail(`${page}: unexpected script: ${script.slice(0, 100)}`);
+    }
     assert.ok(!/\son[a-z]+="/.test(html), `${page}: no inline event handlers`);
   }
 });

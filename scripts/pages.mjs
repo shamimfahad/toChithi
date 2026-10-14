@@ -101,7 +101,7 @@ export const PAGES = {
       'নিজের মতো সাজানো: কাগজের রং, রুল বা ছক, মার্জিন, কিনারা, কালি ও হরফ',
       'এক ক্লিকে তারিখ, সম্বোধন, ইতি ও পুনশ্চ',
       'টেপ দিয়ে আটকানো প্রিন্টের মতো ছবি',
-      'নমুনা: ব্যক্তিগত চিঠি, ধন্যবাদের চিঠি, নিমন্ত্রণপত্র ও দরখাস্ত',
+      'নমুনা: ব্যক্তিগত চিঠি, ধন্যবাদে�� চিঠি, নিমন্ত্রণপত্র ও দরখাস্ত',
       'Gmail, Outlook, Yahoo Mail বা Apple Mail-এ কপি করুন; PNG ছবি বা HTML কোড হিসেবে নিন',
       'বাংলা ও ইংরেজি',
       'সবকিছু ব্রাউজারে চলে; কিছুই আপলোড হয় না',
@@ -260,6 +260,10 @@ ${p.about}
 <script src="/vendor/quill.js" defer fetchpriority="high"></script>
 <script src="/builder.js" defer fetchpriority="high"></script>
 <script src="/app.js" defer fetchpriority="high"></script>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
 `;
