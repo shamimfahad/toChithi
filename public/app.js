@@ -78,6 +78,7 @@
       ink_neel: 'Blue ink', ink_kalo: 'Black ink', ink_sobuj: 'Green ink', ink_beguni: 'Violet ink',
       handHint: 'Handwritten lettering is kept when you make an image. Pasted as text, an email shows it only where the reader’s device has the font.',
       view: 'Preview as', wide: 'Computer', phone: 'Phone',
+      zoom: 'Zoom', zoomIn: 'Zoom in', zoomOut: 'Zoom out', zoomReset: 'Back to actual size',
       copy: 'Copy letter', asImage: 'Make image', asCode: 'HTML code',
       copied: 'Now open your email and paste it into the message{key}.',
       selected: 'The letter is selected. Copy it{key}, then paste it into your email.',
@@ -152,6 +153,7 @@
       ink_neel: 'নীল কালি', ink_kalo: 'কালো কালি', ink_sobuj: 'সবুজ কালি', ink_beguni: 'বেগুনি কালি',
       handHint: 'হাতের লেখার হরফ ছবিতে হুবহু থাকে। লেখা হিসেবে পেস্ট করলে পাঠকের ডিভাইসে হরফটি থাকলে তবেই তা দেখা যাবে।',
       view: 'পর্দা', wide: 'কম্পিউটার', phone: 'ফোন',
+      zoom: 'জুম', zoomIn: 'বড় করে দেখুন', zoomOut: 'ছোট করে দেখুন', zoomReset: 'আসল মাপে ফিরুন',
       copy: 'চিঠি কপি করুন', asImage: 'ছবি বানান', asCode: 'HTML কোড',
       copied: 'এবার ইমেইল খুলে লেখার জায়গায় পেস্ট করুন{key}।',
       selected: 'চিঠিটি বাছাই করা আছে। কপি করুন{key}, তারপর ইমেইলে পেস্ট করুন।',
@@ -195,7 +197,7 @@
     }
   };
 
-  var state = { lang: 'en', design: null, view: 'wide', sample: false };
+  var state = { lang: 'en', design: null, view: 'wide', zoom: 1, sample: false };
 
   function t(key, vars) {
     var table = own(I18N, state.lang) ? I18N[state.lang] : I18N.en;
@@ -1034,6 +1036,7 @@
     $('design-hint').textContent = low ? t('lowContrast') : '';
     var w = frameWidth();
     $('frame').style.maxWidth = w ? w + 'px' : 'none';
+    showZoom();
   }
   function press(selector, key, value) {
     document.querySelectorAll(selector).forEach(function (b) { b.setAttribute('aria-pressed', b.dataset[key] === value ? 'true' : 'false'); });
@@ -1086,6 +1089,36 @@
     state.view = b.dataset.view === 'phone' ? 'phone' : 'wide';
     showOptions();
   });
+  // ---- Zoom: only the preview is scaled. The copied letter and the image are built off-stage, at actual size.
+  var ZOOMS = [0.5, 0.67, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+  function showZoom() {
+    var z = state.zoom;
+    $('frame').style.zoom = z === 1 ? '' : String(z);
+    $('zoom-reset').textContent = num(Math.round(z * 100)) + '%';
+    $('zoom-reset').title = t('zoomReset');
+    $('zoom-out').disabled = z <= ZOOMS[0];
+    $('zoom-in').disabled = z >= ZOOMS[ZOOMS.length - 1];
+  }
+  function stepZoom(dir) {
+    var i = ZOOMS.indexOf(state.zoom) + dir;
+    if (i < 0 || i >= ZOOMS.length) return;
+    state.zoom = ZOOMS[i];
+    showZoom();
+  }
+  $('zoom-in').addEventListener('click', function () { stepZoom(1); });
+  $('zoom-out').addEventListener('click', function () { stepZoom(-1); });
+  $('zoom-reset').addEventListener('click', function () { state.zoom = 1; showZoom(); });
+  // Ctrl + scroll, and a pinch on a trackpad (which the browser reports the same way), zoom the preview.
+  var wheel = 0;
+  $('stage').addEventListener('wheel', function (e) {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    wheel += e.deltaY;
+    if (Math.abs(wheel) < 40) return;
+    stepZoom(wheel < 0 ? 1 : -1);
+    wheel = 0;
+  }, { passive: false });
+
   $('design').addEventListener('input', function (e) {
     var key = e.target && e.target.dataset ? e.target.dataset.color : '';
     if (key) setDesign(key, e.target.value);

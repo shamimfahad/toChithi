@@ -170,6 +170,8 @@ html[lang] .mark [lang="bn"] { font-family: inherit; }
 
 .stage { flex: 1; min-height: 0; overflow: auto; padding: 26px 16px; background: var(--stage); }
 .frame { width: 100%; margin: 0 auto; transition: max-width 0.2s ease; }
+.zoom-value { min-width: 4.2em; font-variant-numeric: tabular-nums; }
+.seg-btn:disabled { opacity: 0.4; cursor: default; }
 
 /* ---- Left pane: writing or stationery ---- */
 .pane-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 7px 10px; border-bottom: 1px solid var(--line-soft); }
@@ -269,7 +271,7 @@ html[lang] .mark [lang="bn"] { font-family: inherit; }
   .editor .ql-editor.ql-blank::before { left: 16px; right: 16px; }
   .design { overflow-y: visible; }
   .stage { overflow: visible; padding: 16px 8px; }
-  .option-view, #customize, .spring { display: none; }
+  .option-view, .option-zoom, #customize, .spring { display: none; }
   .pick { flex: 1 1 100%; height: 48px; }
   .send .btn { flex: 1 1 0; }
   .said { flex-basis: 100%; margin-left: 0; }
